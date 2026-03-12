@@ -1,0 +1,16 @@
+import pandas as pd
+import numpy as np
+
+# Generate dummy data
+num_rows = 100
+df = pd.DataFrame({
+    "feature1": np.random.rand(num_rows),
+    "feature2": np.random.rand(num_rows),
+    "feature3": np.random.randint(0, 10, num_rows),
+    "label": np.random.randint(0, 2, num_rows)  # binary labels 0 or 1
+})
+
+# Save as Parquet to your project folder
+df.to_parquet(r"C:\Users\smanj\SparkScale_Churn\train_data.parquet", index=False)
+
+print("train_data.parquet created successfully!")
