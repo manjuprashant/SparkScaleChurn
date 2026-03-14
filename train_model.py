@@ -15,7 +15,8 @@ print("Spark ML Pipeline Started")
 
 # Load dataset
 
-df = spark.read.csv("/opt/spark/data/telecom_data.csv", header=True, inferSchema=True)
+# df = spark.read.csv("/opt/spark/data/telecom_data.csv", header=True, inferSchema=True)
+df = spark.read.csv("/opt/project/data/telecom_data.csv", header=True, inferSchema=True)
 
 print("Dataset Loaded")
 df.printSchema()
