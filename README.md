@@ -1,120 +1,197 @@
 
-# SparkScaleChurn
+# SparkScale Churn Prediction
 
-## Project Overview
-**SparkScaleChurn** is a scalable churn prediction project built using **Apache Spark** and **PySpark MLlib**. The project processes customer data, trains machine learning models, and predicts the likelihood of customer churn. It is designed to handle large datasets efficiently with Spark’s distributed computing capabilities.
+## Overview
 
-The project includes:
-- Data preprocessing and feature engineering.
-- Multiple ML pipelines: Decision Tree, Random Forest, Gradient Boosted Trees, and Logistic Regression.
-- Model evaluation and metrics tracking.
-- Storage of processed data and trained models for future inference.
+SparkScale Churn Prediction is a distributed machine learning pipeline built using **Apache Spark** and **Docker** to predict customer churn in a telecom dataset.
+The system demonstrates scalable data processing, model training, and batch prediction using a Spark cluster.
+
+This project simulates a **production-style big data pipeline** where churn prediction is trained and executed across multiple worker nodes.
 
 ---
 
-## Folder Structure
+## Technologies Used
 
+* Apache Spark 3.5
+* Python (PySpark)
+* Docker & Docker Compose
+* Machine Learning (Spark ML)
+* Parquet Data Format
 
-SparkScaleChurn/
+---
+
+## System Architecture
+
+```
+Telecom Dataset
+      │
+      ▼
+Data Processing (PySpark)
+      │
+      ▼
+Feature Engineering
+      │
+      ▼
+Model Training (Spark ML)
+      │
+      ▼
+Saved Model
+      │
+      ▼
+Batch Prediction
+      │
+      ▼
+Prediction Output
+```
+
+Running on a distributed Spark cluster:
+
+```
+Docker Spark Cluster
 │
-├── data/ # Raw input datasets
-├── processed/ # Processed output datasets
-├── models/ # Trained ML models and pipelines
-├── backup/ # Backup of original scripts/data
-├── BinaryClassificationEvaluator.py
-├── batch_predict.py
-├── data_processing.py
-├── evaluate.py
-├── evaluation_metrics.txt
-├── evaluation_report_churn.pdf
-├── generate_dataset.py
-├── train_model.py
-├── week3_modelling_with_metrics.py
-└── README.md # Project documentation
-
+├── Spark Master
+├── Spark Worker 1
+└── Spark Worker 2
+```
 
 ---
 
-## Prerequisites
-- Python 3.14+
-- Apache Spark 3.5+
-- PySpark
-- pandas, numpy, matplotlib, seaborn (for EDA and visualization)
+## Project Structure
+
+```
+SparkScale_Churn
+│
+├── data/                      # Raw telecom dataset
+├── processed/                 # Processed Spark dataset
+├── models/                    # Saved trained model
+├── predictions/               # Prediction results
+│
+├── data_processing.py         # Data preprocessing pipeline
+├── train_model.py             # Spark ML model training
+├── batch_predict.py           # Batch prediction pipeline
+├── evaluate.py                # Model evaluation
+│
+├── docker-compose.yml         # Spark cluster configuration
+├── train_data.parquet         # Training dataset
+└── evaluation_report_churn.pdf
+```
 
 ---
 
-## Installation
+## Spark Cluster Setup
 
-1. Clone the repository:
+Start the Spark cluster using Docker:
 
 ```bash
-git clone https://github.com/manjuprashant/SparkScaleChurn.git
-cd SparkScaleChurn
+docker compose up -d
+```
 
-Create a virtual environment and install dependencies:
+Check running containers:
 
-python -m venv venv
-.\venv\Scripts\activate       # Windows
-pip install -r requirements.txt
+```bash
+docker ps
+```
 
-Make sure Spark is installed and available in your PATH.
+Spark Master UI:
 
-Usage
+```
+http://localhost:8080
+```
 
-Data Generation & Processing
+---
 
-python generate_dataset.py       # Generate synthetic dataset (if applicable)
-python data_processing.py        # Clean and process raw data
+## Train the Model
 
-Processed data will be saved in processed/.
+Enter the Spark master container:
 
-Model Training
+```bash
+docker exec -it spark-master bash
+```
 
-python train_model.py
+Run the training pipeline:
 
-Trained models are saved in the models/ folder.
+```bash
+/opt/spark/bin/spark-submit \
+--master spark://spark-master:7077 \
+/opt/project/train_model.py
+```
 
-Batch Predictions
+---
 
-python batch_predict.py
+## Run Batch Prediction
 
-Predictions are stored in output/ folder.
+```bash
+/opt/spark/bin/spark-submit \
+--master spark://spark-master:7077 \
+/opt/project/batch_predict.py
+```
 
-Evaluation
+Prediction results will be saved to:
 
-python evaluate.py
+```
+predictions/
+```
 
-Generates evaluation metrics and reports (evaluation_metrics.txt, evaluation_report_churn.pdf).
+Output files are stored in **Parquet format**.
 
-Models Included
+---
 
-Decision Tree Classifier
+## Example Spark Job Output
 
-Random Forest Classifier
+Spark UI shows completed distributed jobs:
 
-Gradient Boosted Trees (GBT) Classifier
+* Churn Prediction Model (Training)
+* Batch Prediction
 
-Logistic Regression
+Workers execute tasks in parallel across the cluster.
 
-All models are stored under models/ and can be reloaded for inference.
+---
 
-Contributing
+## Results
 
-Fork the repo
+The model predicts churn probability for each telecom user.
 
-Create a feature branch (git checkout -b feature-name)
+Output columns:
 
-Commit your changes (git commit -m 'Add feature')
+```
+user_id
+prediction
+probability
+```
 
-Push to the branch (git push origin feature-name)
+Prediction files are stored in:
 
-Open a Pull Request
+```
+predictions/part-*.snappy.parquet
+```
 
-License
+---
 
-This project is licensed under the MIT License.
+## Key Features
 
-Contact
+* Distributed data processing with Apache Spark
+* Containerized cluster deployment using Docker
+* Machine learning pipeline with Spark ML
+* Batch prediction workflow
+* Production-style architecture
+
+---
+
+## Future Improvements
+
+* Real-time streaming predictions using Spark Streaming
+* Integration with Kafka for event-driven data
+* Model monitoring with MLflow
+* REST API for churn prediction service
+
+---
+
+## Author
 
 Manjula Srinivasan
-GitHub: https://github.com/manjuprashant
+
+---
+
+## License
+
+This project is for educational and research purposes.
