@@ -1,0 +1,1 @@
+train_df, test_df = df.randomSplit([0.8, 0.2], seed=42)
